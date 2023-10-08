@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, Image, StyleSheet, Text, View} from 'react-native';
+import { API_KEY } from '@env'
 
 type MovieProps = {
     id: string;
@@ -57,7 +58,7 @@ const MovieBox = (props: MovieProps) => {
     const [loading, setLoading] = useState(true);
 
     const fetchData = async () => {
-        const resp = await fetch("https://api.themoviedb.org/3/movie/" + props.id + "?api_key=&language=fr-FR");
+        const resp = await fetch("https://api.themoviedb.org/3/movie/" + props.id + "?api_key=" + API_KEY + "&language=fr-FR");
         const data = await resp.json();
         setData(data);
         setLoading(false);
