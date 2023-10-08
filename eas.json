@@ -16,6 +16,13 @@
     "preview3": {
       "developmentClient": true
     },
-    "production": {}
+    "production": {
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "API_KEY": "process.env.API_KEY"
+      }
+    }
   }
 }

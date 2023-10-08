@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, Image, StyleSheet, Text, View} from 'react-native';
+// @ts-ignore
 import { API_KEY } from '@env'
 
 type MovieProps = {
