@@ -1,9 +1,11 @@
 import React, {useCallback, useState} from "react";
-import {FlatList, FlatListProps, Image, StyleSheet, Text, View} from "react-native";
+import {FlatList, FlatListProps, Image, Platform, StyleSheet, Text, TouchableNativeFeedback, View} from "react-native";
 import {debounce} from 'lodash';
 // @ts-ignore
 import {API_KEY} from '@env'
-import {Appbar, Searchbar} from "react-native-paper";
+import {Searchbar} from "react-native-paper";
+import {useDispatch} from "react-redux";
+import {movieAdded} from "../redux/slices/MovieSlice";
 
 type Movie = {
     id: number;
@@ -52,7 +54,7 @@ const styles = StyleSheet.create({
     }
 );
 
-const MovieSelector = () => {
+const MovieSelector = ({ navigation: { goBack } }) => {
     const [movies, setMovies] = useState<Movie[]>([]);
     const [loading, setLoading] = useState(false);
     const [query, setQuery] = React.useState('');
@@ -85,21 +87,36 @@ const MovieSelector = () => {
         setLoading(false);
     };
 
+    const dispatch = useDispatch();
+    const dispatchNewMovie = (movieId: number) => {
+        dispatch(movieAdded(movieId));
+        goBack();
+    }
+
     const renderMovie = (item: FlatListProps<Movie>) => {
         const movie = item.item;
         return (
             <View style={styles.movieContainer}>
-                <Image
-                    style={styles.poster}
-                    source={{
-                        uri: 'https://image.tmdb.org/t/p/w500/' + movie.poster_path
-                    }}
-                ></Image>
-                <View>
-                    <Text style={styles.title}>{movie.title}</Text>
-                    {movie.title !== movie.original_title && (
-                        <Text style={styles.originalTitle}>{movie.original_title}</Text>)}
-                </View>
+                <TouchableNativeFeedback onPress={() => dispatchNewMovie(movie.id)}
+                                         background={
+                                             Platform.OS === 'android'
+                                                 ? TouchableNativeFeedback.SelectableBackground()
+                                                 : undefined
+                                         }>
+                    <View>
+                        <Image
+                            style={styles.poster}
+                            source={{
+                                uri: 'https://image.tmdb.org/t/p/w500/' + movie.poster_path
+                            }}
+                        ></Image>
+                        <View>
+                            <Text style={styles.title}>{movie.title}</Text>
+                            {movie.title !== movie.original_title && (
+                                <Text style={styles.originalTitle}>{movie.original_title}</Text>)}
+                        </View>
+                    </View>
+                </TouchableNativeFeedback>
             </View>
         );
     }
