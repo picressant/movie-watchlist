@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, Image, StyleSheet, Text, View} from 'react-native';
 // @ts-ignore
-import { API_KEY } from '@env'
+import {API_KEY} from '@env'
 
 type MovieProps = {
     id: string;
@@ -18,6 +18,7 @@ type Movie = {
 const styles = StyleSheet.create({
         container: {
             display: "flex",
+            marginVertical: 10,
             // flex:1,
             flexDirection: "row",
 
@@ -35,7 +36,6 @@ const styles = StyleSheet.create({
             borderRadius: 8,
             padding: 10,
             width: '100%',
-            margin: 10,
         },
         poster: {
             width: 80,

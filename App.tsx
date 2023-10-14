@@ -11,8 +11,8 @@ import ScrollView = Animated.ScrollView;
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: "green",
-        flex: 1
+        flex: 1,
+        marginHorizontal: 10
     },
     fab: {
         position: "absolute",

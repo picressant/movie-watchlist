@@ -1,5 +1,15 @@
 import React, {useCallback, useState} from "react";
-import {FlatList, FlatListProps, Image, Platform, StyleSheet, Text, TouchableNativeFeedback, View} from "react-native";
+import {
+    ActivityIndicator,
+    FlatList,
+    FlatListProps,
+    Image,
+    Platform,
+    StyleSheet,
+    Text,
+    TouchableNativeFeedback,
+    View
+} from "react-native";
 import {debounce} from 'lodash';
 // @ts-ignore
 import {API_KEY} from '@env'
@@ -15,11 +25,9 @@ type Movie = {
 }
 
 const styles = StyleSheet.create({
-        container: {
+        searchContainer: {
             flex: 1,
             flexDirection: "column",
-
-            backgroundColor: 'blue',
             width: '100%',
             margin: 5,
         },
@@ -27,15 +35,19 @@ const styles = StyleSheet.create({
         movieContainer: {
             flex: 1,
             flexDirection: "row",
-
-            backgroundColor: 'red',
             borderRadius: 8,
             padding: 5,
             width: '100%',
-            margin: 5,
+            marginVertical: 5,
         },
         foundMovies: {
             flex: 1,
+            marginHorizontal: 5
+        },
+        loader: {
+            justifyContent: "center",
+            flex: 1,
+            alignItems: "center"
         },
         poster: {
             width: 50,
@@ -54,7 +66,7 @@ const styles = StyleSheet.create({
     }
 );
 
-const MovieSelector = ({ navigation: { goBack } }) => {
+const MovieSelector = ({navigation: {goBack}}) => {
     const [movies, setMovies] = useState<Movie[]>([]);
     const [loading, setLoading] = useState(false);
     const [query, setQuery] = React.useState('');
@@ -122,17 +134,24 @@ const MovieSelector = ({ navigation: { goBack } }) => {
     }
 
     return (
-        <View style={styles.container}>
+        <View style={styles.searchContainer}>
             <Searchbar
                 style={styles.searchBar}
                 onChangeText={searchText}
                 value={query}
                 placeholder="Search movie">
             </Searchbar>
-            <FlatList style={styles.foundMovies}
-                      data={movies}
-                      renderItem={renderMovie}
-            ></FlatList>
+            {loading && (
+                <View style={styles.loader}>
+                <ActivityIndicator size={'large'}></ActivityIndicator>
+                </View>)}
+            {!loading && (
+                <FlatList style={styles.foundMovies}
+                          data={movies}
+                          renderItem={renderMovie}
+                ></FlatList>
+            )}
+
         </View>
     )
 };
