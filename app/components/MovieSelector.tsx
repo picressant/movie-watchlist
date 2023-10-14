@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from "react";
-import {ActivityIndicator, FlatList, FlatListProps, Image, StyleSheet, Text, TextInput, View} from "react-native";
-import { debounce } from 'lodash';
+import React, {useCallback, useState} from "react";
+import {FlatList, FlatListProps, Image, StyleSheet, Text, View} from "react-native";
+import {debounce} from 'lodash';
 // @ts-ignore
-import { API_KEY } from '@env'
+import {API_KEY} from '@env'
+import {Appbar, Searchbar} from "react-native-paper";
 
 type Movie = {
     id: number;
@@ -12,17 +13,28 @@ type Movie = {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        display: "flex",
-        // flex:1,
-        flexDirection: "row",
+        container: {
+            flex: 1,
+            flexDirection: "column",
 
-        backgroundColor: 'red',
-        borderRadius: 8,
-        padding: 5,
-        width: '100%',
-        margin: 5,
-    },
+            backgroundColor: 'blue',
+            width: '100%',
+            margin: 5,
+        },
+        searchBar: {},
+        movieContainer: {
+            flex: 1,
+            flexDirection: "row",
+
+            backgroundColor: 'red',
+            borderRadius: 8,
+            padding: 5,
+            width: '100%',
+            margin: 5,
+        },
+        foundMovies: {
+            flex: 1,
+        },
         poster: {
             width: 50,
             height: 75,
@@ -43,16 +55,30 @@ const styles = StyleSheet.create({
 const MovieSelector = () => {
     const [movies, setMovies] = useState<Movie[]>([]);
     const [loading, setLoading] = useState(false);
-    const [text, setText] = React.useState();
+    const [query, setQuery] = React.useState('');
 
-    const onChangeText = debounce((enteredText: string) => {
-        console.log(enteredText);
-        fetchData(enteredText);
-    }, 500);
+    const debouncedSave = useCallback(
+        debounce(nextValue => fetchData(nextValue), 1000),
+        [], // will be created only once initially
+    );
 
-    const fetchData = async (query: string) => {
-        setLoading(true);
-        const resp = await fetch("https://api.themoviedb.org/3/search/movie?api_key=" + API_KEY + "&language=fr-FR&query=" + query);
+    const searchText = (searchedText) => {
+        console.log("entered text", searchedText);
+        setQuery(searchedText);
+        debouncedSave.cancel();
+
+        if (searchedText === "") {
+            setMovies([]);
+        } else {
+            setLoading(true);
+            debouncedSave(searchedText);
+        }
+    };
+
+
+    const fetchData = async (search: string) => {
+        console.log("searched text " + search);
+        const resp = await fetch("https://api.themoviedb.org/3/search/movie?api_key=" + API_KEY + "&language=fr-FR&query=" + search);
         const data = await resp.json();
         setMovies(data.results.slice(0, 3));
         console.log(movies);
@@ -62,7 +88,7 @@ const MovieSelector = () => {
     const renderMovie = (item: FlatListProps<Movie>) => {
         const movie = item.item;
         return (
-            <View style={styles.container}>
+            <View style={styles.movieContainer}>
                 <Image
                     style={styles.poster}
                     source={{
@@ -79,19 +105,17 @@ const MovieSelector = () => {
     }
 
     return (
-        <View>
-          <View>
-              <TextInput
-                  onChangeText={onChangeText}
-                  value={text}
-                  placeholder="Search movie">
-              </TextInput>
-              {movies.length > 0 &&
-                  <FlatList
+        <View style={styles.container}>
+            <Searchbar
+                style={styles.searchBar}
+                onChangeText={searchText}
+                value={query}
+                placeholder="Search movie">
+            </Searchbar>
+            <FlatList style={styles.foundMovies}
                       data={movies}
                       renderItem={renderMovie}
-                  ></FlatList>}
-          </View>
+            ></FlatList>
         </View>
     )
 };
