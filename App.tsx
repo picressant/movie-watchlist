@@ -1,15 +1,16 @@
-import {Animated, StyleSheet, View} from 'react-native';
+import {Animated, Button, StyleSheet, View} from 'react-native';
 import React from "react";
 import MovieSelector from "./app/components/MovieSelector";
 import {NavigationContainer} from "@react-navigation/native";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import MovieBox from './app/components/MovieBox';
-import {FAB} from "react-native-paper";
-import {Provider, useSelector} from "react-redux";
+import {FAB, IconButton} from "react-native-paper";
+import {Provider, useDispatch, useSelector} from "react-redux";
 import MoviePage from "./app/components/MoviePage";
 import {persistor, store} from "./app/redux/store/storage";
 import {PersistGate} from 'redux-persist/integration/react';
 import ScrollView = Animated.ScrollView;
+import {movieRemoved} from "./app/redux/slices/MovieSlice";
 
 const styles = StyleSheet.create({
     container: {

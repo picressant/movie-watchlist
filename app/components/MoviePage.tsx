@@ -5,7 +5,7 @@ import {API_KEY} from '@env'
 import {fetchMovie, Movie, WatchProvider} from "../domain/Movie";
 import {useDispatch} from "react-redux";
 import {movieRemoved} from "../redux/slices/MovieSlice";
-import {List} from "react-native-paper";
+import {Button, Dialog, FAB, List, PaperProvider, Portal} from "react-native-paper";
 import CountryFlag from "react-native-country-flag";
 import {getCountry} from "../domain/Countries";
 
@@ -89,18 +89,29 @@ const styles = StyleSheet.create({
         margin: 2,
         borderRadius: 2,
     },
+    fab: {
+        position: "absolute",
+        bottom: 10,
+        right: 10
+    }
 });
 
 const MoviePage = ({route, navigation}) => {
     const [data, setData] = useState<Movie>();
     const [loading, setLoading] = useState(true);
+    const [visible, setVisible] = React.useState(false);
+
+    const showDialog = () => setVisible(true);
+
+    const hideDialog = () => setVisible(false);
 
     const {id, watchLang} = route.params;
     // const regionNamesInFrench = new Intl.DisplayNames(['fr'], { type: 'region' });
 
     const dispatch = useDispatch();
-    const dispatchDelete = (movieId: number) => {
-        dispatch(movieRemoved(movieId));
+    const dispatchDelete = () => {
+        console.log("deleting", id);
+        dispatch(movieRemoved(id));
         navigation.goBack();
     }
 
@@ -135,48 +146,66 @@ const MoviePage = ({route, navigation}) => {
     }
 
     return (
-        <View style={styles.container}>
-            {loading && <ActivityIndicator/>}
-            {data && (
-                <View style={styles.container}>
-                    <Image source={{
-                        uri: 'https://image.tmdb.org/t/p/w500/' + data.backdrop_path
-                    }} style={styles.backgroundImg}></Image>
-                    <Image
-                        style={styles.poster}
-                        source={{
-                            uri: 'https://image.tmdb.org/t/p/w500/' + data.poster_path
-                        }}
-                    ></Image>
-                    <View style={styles.movieInfo}>
-                        <Text style={styles.title}>{data.title}</Text>
-                        {data.title !== data.original_title && (
-                            <Text style={styles.originalTitle}>{data.original_title}</Text>)}
+        <PaperProvider>
+            <View style={styles.container}>
+                {loading && <ActivityIndicator/>}
+                {data && (
+                    <View style={styles.container}>
+                        <Image source={{
+                            uri: 'https://image.tmdb.org/t/p/w500/' + data.backdrop_path
+                        }} style={styles.backgroundImg}></Image>
+                        <Image
+                            style={styles.poster}
+                            source={{
+                                uri: 'https://image.tmdb.org/t/p/w500/' + data.poster_path
+                            }}
+                        ></Image>
+                        <View style={styles.movieInfo}>
+                            <Text style={styles.title}>{data.title}</Text>
+                            {data.title !== data.original_title && (
+                                <Text style={styles.originalTitle}>{data.original_title}</Text>)}
+                        </View>
+                        <View style={styles.otherInfo}>
+                            <View style={styles.otherData}>
+                                <List.Icon icon={"clock-time-eight-outline"} color={"grey"}
+                                           style={styles.otherData.font}></List.Icon>
+                                <Text style={styles.otherData.font}>{data.runtime} min</Text>
+                            </View>
+                            <View style={styles.otherData}>
+                                <List.Icon icon={"account"} color={"grey"}
+                                           style={styles.otherData.font}></List.Icon>
+                                <Text style={styles.otherData.font}>{data.actors.join(', ')}</Text>
+                            </View>
+                            <View style={styles.otherData}>
+                                <List.Icon icon={"movie-open"} color={"grey"}
+                                           style={styles.otherData.font}></List.Icon>
+                                <Text style={styles.otherData.font}>{data.directors.join(', ')}</Text>
+                            </View>
+                        </View>
+                        <FlatList style={styles.providers}
+                                  data={data.providers.filter(p => p.flatrate?.length > 0)}
+                                  renderItem={renderProvider}></FlatList>
                     </View>
-                    <View style={styles.otherInfo}>
-                        <View style={styles.otherData}>
-                            <List.Icon icon={"clock-time-eight-outline"} color={"grey"}
-                                       style={styles.otherData.font}></List.Icon>
-                            <Text style={styles.otherData.font}>{data.runtime} min</Text>
-                        </View>
-                        <View style={styles.otherData}>
-                            <List.Icon icon={"account"} color={"grey"}
-                                       style={styles.otherData.font}></List.Icon>
-                            <Text style={styles.otherData.font}>{data.actors.join(', ')}</Text>
-                        </View>
-                        <View style={styles.otherData}>
-                            <List.Icon icon={"movie-open"} color={"grey"}
-                                       style={styles.otherData.font}></List.Icon>
-                            <Text style={styles.otherData.font}>{data.directors.join(', ')}</Text>
-                        </View>
-                    </View>
-                    <FlatList style={styles.providers}
-                              data={data.providers.filter(p => p.flatrate?.length > 0)}
-                              renderItem={renderProvider}></FlatList>
-                </View>
-
-            )}
-        </View>
+                )}
+                <FAB
+                    icon="delete"
+                    style={styles.fab}
+                    onPress={showDialog}
+                />
+                <Portal>
+                    <Dialog visible={visible} onDismiss={hideDialog}>
+                        <Dialog.Title>Alert</Dialog.Title>
+                        <Dialog.Content>
+                            <Text variant="bodyMedium">Êtes-vous sûr de vouloir supprimer ?</Text>
+                        </Dialog.Content>
+                        <Dialog.Actions>
+                            <Button title={"cancel"} onPress={hideDialog}>Annuler</Button>
+                            <Button title={"delete"} onPress={dispatchDelete}>Supprimer</Button>
+                        </Dialog.Actions>
+                    </Dialog>
+                </Portal>
+            </View>
+        </PaperProvider>
     )
 };
 
