@@ -1,14 +1,15 @@
-import {Animated, StyleSheet, Text, View} from 'react-native';
+import {Animated, StyleSheet, View} from 'react-native';
 import React from "react";
 import MovieSelector from "./app/components/MovieSelector";
 import {NavigationContainer} from "@react-navigation/native";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import MovieBox from './app/components/MovieBox';
 import {FAB} from "react-native-paper";
-import {store} from "./app/redux/store/configureStore";
 import {Provider, useSelector} from "react-redux";
-import ScrollView = Animated.ScrollView;
 import MoviePage from "./app/components/MoviePage";
+import {persistor, store} from "./app/redux/store/storage";
+import {PersistGate} from 'redux-persist/integration/react';
+import ScrollView = Animated.ScrollView;
 
 const styles = StyleSheet.create({
     container: {
@@ -32,7 +33,8 @@ const HomeScreen = ({navigation}) => {
     return (
         <View style={styles.containerMarged}>
             <ScrollView>
-                {movieIds.map(id => <MovieBox navigation={navigation} props={{id: id.toString(), watchLang:"FR"}}></MovieBox>)}
+                {movieIds.map(id => <MovieBox navigation={navigation}
+                                              props={{id: id.toString(), watchLang: "FR"}}></MovieBox>)}
             </ScrollView>
             <FAB
                 icon="plus"
@@ -66,13 +68,15 @@ const Stack = createNativeStackNavigator();
 export default function App() {
     return (
         <Provider store={store}>
-            <NavigationContainer>
-                <Stack.Navigator initialRouteName="Home">
-                    <Stack.Screen name="Watch list" component={HomeScreen}/>
-                    <Stack.Screen name="Select a movie" component={MovieSelectorScreen}/>
-                    <Stack.Screen name="Details" component={MovieDetailsPage}/>
-                </Stack.Navigator>
-            </NavigationContainer>
+            <PersistGate loading={null} persistor={persistor}>
+                <NavigationContainer>
+                    <Stack.Navigator initialRouteName="Home">
+                        <Stack.Screen name="Watch list" component={HomeScreen}/>
+                        <Stack.Screen name="Select a movie" component={MovieSelectorScreen}/>
+                        <Stack.Screen name="Details" component={MovieDetailsPage}/>
+                    </Stack.Navigator>
+                </NavigationContainer>
+            </PersistGate>
         </Provider>
 
     );

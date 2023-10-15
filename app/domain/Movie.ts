@@ -19,6 +19,8 @@ export type Movie = {
     runtime: number;
     providers: WatchProvider[];
     favoriteCountryProviders: WatchProvider | undefined;
+    actors: string[];
+    directors: string[];
 }
 
 export async function fetchMovie(id: string, watchLang: string): Promise<Movie> {
@@ -35,6 +37,13 @@ export async function fetchMovie(id: string, watchLang: string): Promise<Movie> 
         data.providers.push(watch);
     });
     data.favoriteCountryProviders = data.providers.find(p => p.lang === watchLang);
+
+    const creditsResponse = await fetch("https://api.themoviedb.org/3/movie/" + id + "/credits?api_key=" + API_KEY);
+    const credits = await creditsResponse.json();
+
+    data.actors = credits.cast.slice(0, 3).map(cast => cast.name);
+    data.directors = credits.crew.filter(crew => crew.job === "Director").map(crew => crew.name);
+
 
     return data;
 }
