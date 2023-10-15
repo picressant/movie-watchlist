@@ -3,30 +3,12 @@ import {ActivityIndicator, Image, StyleSheet, Text, View} from 'react-native';
 // @ts-ignore
 import {API_KEY} from '@env'
 import {List} from 'react-native-paper';
+import {Movie, WatchProvider} from "../domain/Movie";
 
 type MovieProps = {
     id: string;
     watchLang: string;
 };
-
-type WatchProvider = {
-    lang: string;
-    flatrate: {
-        logo_path: string;
-        provider_name: string;
-        display_priority: number
-    }[]
-};
-
-type Movie = {
-    id: number;
-    poster_path: string;
-    title: string;
-    original_title: string;
-    runtime: number;
-    providers: WatchProvider[];
-    favoriteCountryProviders: WatchProvider | undefined;
-}
 
 const styles = StyleSheet.create({
         container: {
