@@ -28,7 +28,7 @@ const HomeScreen = ({navigation}) => {
     return (
         <View style={styles.container}>
             <ScrollView>
-                {movieIds.map(id => <MovieBox id={id.toString()}></MovieBox>)}
+                {movieIds.map(id => <MovieBox id={id.toString()} watchLang={"FR"}></MovieBox>)}
             </ScrollView>
             <FAB
                 icon="plus"

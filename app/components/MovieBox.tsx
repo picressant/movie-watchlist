@@ -2,9 +2,20 @@ import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, Image, StyleSheet, Text, View} from 'react-native';
 // @ts-ignore
 import {API_KEY} from '@env'
+import {List} from 'react-native-paper';
 
 type MovieProps = {
     id: string;
+    watchLang: string;
+};
+
+type WatchProvider = {
+    lang: string;
+    flatrate: {
+        logo_path: string;
+        provider_name: string;
+        display_priority: number
+    }[]
 };
 
 type Movie = {
@@ -13,6 +24,8 @@ type Movie = {
     title: string;
     original_title: string;
     runtime: number;
+    providers: WatchProvider[];
+    favoriteCountryProviders: WatchProvider | undefined;
 }
 
 const styles = StyleSheet.create({
@@ -37,11 +50,25 @@ const styles = StyleSheet.create({
             padding: 10,
             width: '100%',
         },
+        movieInfo: {
+            flexDirection: "column",
+            flex: 1,
+            padding: 5
+        },
+        movieProviders: {
+            marginTop: "auto",
+            flexDirection: "row"
+        },
         poster: {
             width: 80,
             height: 125,
-            margin: 5,
             borderRadius: 10
+        },
+        smallPoster: {
+            height: 32,
+            width: 32,
+            margin: 2,
+            borderRadius: 2,
         },
         title: {
             fontWeight: "bold",
@@ -50,6 +77,16 @@ const styles = StyleSheet.create({
         originalTitle: {
             fontStyle: "italic",
             fontSize: 10
+        },
+        time: {
+            marginTop: 5,
+            flexDirection: "row",
+            alignItems: "center",
+            color: "grey",
+            font: {
+                fontSize: 10,
+                marginRight: 2
+            }
         }
     }
 );
@@ -60,7 +97,18 @@ const MovieBox = (props: MovieProps) => {
 
     const fetchData = async () => {
         const resp = await fetch("https://api.themoviedb.org/3/movie/" + props.id + "?api_key=" + API_KEY + "&language=fr-FR");
-        const data = await resp.json();
+        const data: Movie = await resp.json();
+
+        const providersResp = await fetch("https://api.themoviedb.org/3/movie/" + props.id + "/watch/providers?api_key=" + API_KEY);
+        const providers = await providersResp.json();
+        data.providers = [];
+
+        Object.keys(providers.results).forEach(key => {
+            const watch: WatchProvider = providers.results[key];
+            watch.lang = key;
+            data.providers.push(watch);
+        });
+        data.favoriteCountryProviders = data.providers.find(p => p.lang === props.watchLang);
         setData(data);
         setLoading(false);
     };
@@ -80,14 +128,22 @@ const MovieBox = (props: MovieProps) => {
                             uri: 'https://image.tmdb.org/t/p/w500/' + data.poster_path
                         }}
                     ></Image>
-                    <View>
+                    <View style={styles.movieInfo}>
                         <Text style={styles.title}>{data.title}</Text>
                         {data.title !== data.original_title && (
                             <Text style={styles.originalTitle}>{data.original_title}</Text>)}
-                        <View>
-                            <View>
-                                <Text>Durée: {data.runtime} min</Text>
-                            </View>
+                        <View style={styles.time}>
+                            <List.Icon icon={"clock-time-eight-outline"} color={"grey"}
+                                       style={styles.time.font}></List.Icon>
+                            <Text style={styles.time.font}>{data.runtime} min</Text>
+                        </View>
+                        <View style={styles.movieProviders}>
+                            {data.favoriteCountryProviders?.flatrate.map(p => <Image
+                                style={styles.smallPoster}
+                                source={{
+                                    uri: 'https://image.tmdb.org/t/p/w500/' + p.logo_path
+                                }}
+                            ></Image>)}
                         </View>
                     </View>
                 </View>
