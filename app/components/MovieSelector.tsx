@@ -29,16 +29,30 @@ const styles = StyleSheet.create({
             flex: 1,
             flexDirection: "column",
             width: '100%',
-            margin: 5,
+            marginVertical: 5,
         },
         searchBar: {},
         movieContainer: {
+            flex: 1
+        },
+        movieCard: {
             flex: 1,
             flexDirection: "row",
-            borderRadius: 8,
             padding: 5,
             width: '100%',
             marginVertical: 5,
+            shadowColor: "#000",
+            shadowOffset: {
+                width: 0,
+                height: 2,
+            },
+            shadowOpacity: 0.32,
+            shadowRadius: 2.46,
+
+            elevation: 1,
+
+            backgroundColor: 'white',
+            borderRadius: 8,
         },
         foundMovies: {
             flex: 1,
@@ -91,11 +105,9 @@ const MovieSelector = ({navigation: {goBack}}) => {
 
 
     const fetchData = async (search: string) => {
-        console.log("searched text " + search);
         const resp = await fetch("https://api.themoviedb.org/3/search/movie?api_key=" + API_KEY + "&language=fr-FR&query=" + search);
         const data = await resp.json();
         setMovies(data.results.slice(0, 3));
-        console.log(movies);
         setLoading(false);
     };
 
@@ -108,28 +120,28 @@ const MovieSelector = ({navigation: {goBack}}) => {
     const renderMovie = (item: FlatListProps<Movie>) => {
         const movie = item.item;
         return (
-            <View style={styles.movieContainer}>
-                <TouchableNativeFeedback onPress={() => dispatchNewMovie(movie.id)}
-                                         background={
-                                             Platform.OS === 'android'
-                                                 ? TouchableNativeFeedback.SelectableBackground()
-                                                 : undefined
-                                         }>
+            <TouchableNativeFeedback
+                style={styles.movieContainer}
+                onPress={() => dispatchNewMovie(movie.id)}
+                background={
+                    Platform.OS === 'android'
+                        ? TouchableNativeFeedback.SelectableBackground()
+                        : undefined
+                }>
+                <View style={styles.movieCard}>
+                    <Image
+                        style={styles.poster}
+                        source={{
+                            uri: 'https://image.tmdb.org/t/p/w500/' + movie.poster_path
+                        }}
+                    ></Image>
                     <View>
-                        <Image
-                            style={styles.poster}
-                            source={{
-                                uri: 'https://image.tmdb.org/t/p/w500/' + movie.poster_path
-                            }}
-                        ></Image>
-                        <View>
-                            <Text style={styles.title}>{movie.title}</Text>
-                            {movie.title !== movie.original_title && (
-                                <Text style={styles.originalTitle}>{movie.original_title}</Text>)}
-                        </View>
+                        <Text style={styles.title}>{movie.title}</Text>
+                        {movie.title !== movie.original_title && (
+                            <Text style={styles.originalTitle}>{movie.original_title}</Text>)}
                     </View>
-                </TouchableNativeFeedback>
-            </View>
+                </View>
+            </TouchableNativeFeedback>
         );
     }
 
@@ -143,7 +155,7 @@ const MovieSelector = ({navigation: {goBack}}) => {
             </Searchbar>
             {loading && (
                 <View style={styles.loader}>
-                <ActivityIndicator size={'large'}></ActivityIndicator>
+                    <ActivityIndicator size={'large'}></ActivityIndicator>
                 </View>)}
             {!loading && (
                 <FlatList style={styles.foundMovies}
