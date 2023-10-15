@@ -1,13 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Image, StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, Image, Platform, StyleSheet, Text, TouchableNativeFeedback, View} from 'react-native';
 // @ts-ignore
 import {API_KEY} from '@env'
 import {List} from 'react-native-paper';
-import {Movie, WatchProvider} from "../domain/Movie";
+import {fetchMovie, Movie} from "../domain/Movie";
 
 type MovieProps = {
     id: string;
     watchLang: string;
+    navigation: { navigate: Function }
 };
 
 const styles = StyleSheet.create({
@@ -73,25 +74,13 @@ const styles = StyleSheet.create({
     }
 );
 
-const MovieBox = (props: MovieProps) => {
+const MovieBox = ({navigation, props}) => {
     const [data, setData] = useState<Movie>();
     const [loading, setLoading] = useState(true);
 
     const fetchData = async () => {
-        const resp = await fetch("https://api.themoviedb.org/3/movie/" + props.id + "?api_key=" + API_KEY + "&language=fr-FR");
-        const data: Movie = await resp.json();
-
-        const providersResp = await fetch("https://api.themoviedb.org/3/movie/" + props.id + "/watch/providers?api_key=" + API_KEY);
-        const providers = await providersResp.json();
-        data.providers = [];
-
-        Object.keys(providers.results).forEach(key => {
-            const watch: WatchProvider = providers.results[key];
-            watch.lang = key;
-            data.providers.push(watch);
-        });
-        data.favoriteCountryProviders = data.providers.find(p => p.lang === props.watchLang);
-        setData(data);
+        const movie = await fetchMovie(props.id, props.watchLang);
+        setData(movie);
         setLoading(false);
     };
 
@@ -103,32 +92,40 @@ const MovieBox = (props: MovieProps) => {
         <View>
             {loading && <ActivityIndicator/>}
             {data && (
-                <View style={styles.container}>
-                    <Image
-                        style={styles.poster}
-                        source={{
-                            uri: 'https://image.tmdb.org/t/p/w500/' + data.poster_path
-                        }}
-                    ></Image>
-                    <View style={styles.movieInfo}>
-                        <Text style={styles.title}>{data.title}</Text>
-                        {data.title !== data.original_title && (
-                            <Text style={styles.originalTitle}>{data.original_title}</Text>)}
-                        <View style={styles.time}>
-                            <List.Icon icon={"clock-time-eight-outline"} color={"grey"}
-                                       style={styles.time.font}></List.Icon>
-                            <Text style={styles.time.font}>{data.runtime} min</Text>
-                        </View>
-                        <View style={styles.movieProviders}>
-                            {data.favoriteCountryProviders?.flatrate.map(p => <Image
-                                style={styles.smallPoster}
-                                source={{
-                                    uri: 'https://image.tmdb.org/t/p/w500/' + p.logo_path
-                                }}
-                            ></Image>)}
+                <TouchableNativeFeedback
+                    onPress={() => navigation.navigate("Details", {id: data.id, watchLang: props.watchLang})}
+                    background={
+                        Platform.OS === 'android'
+                            ? TouchableNativeFeedback.SelectableBackground()
+                            : undefined
+                    }>
+                    <View style={styles.container}>
+                        <Image
+                            style={styles.poster}
+                            source={{
+                                uri: 'https://image.tmdb.org/t/p/w500/' + data.poster_path
+                            }}
+                        ></Image>
+                        <View style={styles.movieInfo}>
+                            <Text style={styles.title}>{data.title}</Text>
+                            {data.title !== data.original_title && (
+                                <Text style={styles.originalTitle}>{data.original_title}</Text>)}
+                            <View style={styles.time}>
+                                <List.Icon icon={"clock-time-eight-outline"} color={"grey"}
+                                           style={styles.time.font}></List.Icon>
+                                <Text style={styles.time.font}>{data.runtime} min</Text>
+                            </View>
+                            <View style={styles.movieProviders}>
+                                {data.favoriteCountryProviders?.flatrate?.map(p => <Image
+                                    style={styles.smallPoster}
+                                    source={{
+                                        uri: 'https://image.tmdb.org/t/p/w500/' + p.logo_path
+                                    }}
+                                ></Image>)}
+                            </View>
                         </View>
                     </View>
-                </View>
+                </TouchableNativeFeedback>
             )}
         </View>
     )

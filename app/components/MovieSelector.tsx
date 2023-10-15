@@ -90,8 +90,7 @@ const MovieSelector = ({navigation: {goBack}}) => {
         [], // will be created only once initially
     );
 
-    const searchText = (searchedText) => {
-        console.log("entered text", searchedText);
+    const searchText = (searchedText: string) => {
         setQuery(searchedText);
         debouncedSave.cancel();
 

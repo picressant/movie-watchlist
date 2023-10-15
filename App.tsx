@@ -8,9 +8,13 @@ import {FAB} from "react-native-paper";
 import {store} from "./app/redux/store/configureStore";
 import {Provider, useSelector} from "react-redux";
 import ScrollView = Animated.ScrollView;
+import MoviePage from "./app/components/MoviePage";
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
+    },
+    containerMarged: {
         flex: 1,
         marginHorizontal: 10
     },
@@ -26,9 +30,9 @@ const HomeScreen = ({navigation}) => {
     const movieIds: number[] = useSelector((state) => state.movies.movieIds)
 
     return (
-        <View style={styles.container}>
+        <View style={styles.containerMarged}>
             <ScrollView>
-                {movieIds.map(id => <MovieBox id={id.toString()} watchLang={"FR"}></MovieBox>)}
+                {movieIds.map(id => <MovieBox navigation={navigation} props={{id: id.toString(), watchLang:"FR"}}></MovieBox>)}
             </ScrollView>
             <FAB
                 icon="plus"
@@ -39,10 +43,19 @@ const HomeScreen = ({navigation}) => {
     );
 };
 
+// @ts-ignore
 function MovieSelectorScreen({navigation}) {
     return (
-        <View style={styles.container}>
+        <View style={styles.containerMarged}>
             <MovieSelector navigation={navigation}></MovieSelector>
+        </View>
+    );
+}
+
+function MovieDetailsPage({route, navigation}) {
+    return (
+        <View style={styles.container}>
+            <MoviePage route={route} navigation={navigation}></MoviePage>
         </View>
     );
 }
@@ -57,6 +70,7 @@ export default function App() {
                 <Stack.Navigator initialRouteName="Home">
                     <Stack.Screen name="Watch list" component={HomeScreen}/>
                     <Stack.Screen name="Select a movie" component={MovieSelectorScreen}/>
+                    <Stack.Screen name="Details" component={MovieDetailsPage}/>
                 </Stack.Navigator>
             </NavigationContainer>
         </Provider>
