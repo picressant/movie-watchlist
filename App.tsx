@@ -9,6 +9,7 @@ import {Provider, useSelector} from "react-redux";
 import MoviePage from "./app/components/MoviePage";
 import {persistor, store} from "./app/redux/store/storage";
 import {PersistGate} from 'redux-persist/integration/react';
+import CountryFlag from "react-native-country-flag";
 import ScrollView = Animated.ScrollView;
 
 const styles = StyleSheet.create({
@@ -44,8 +45,10 @@ const theme = {
 const navTheme = {
     ...DefaultTheme,
     colors: {
-        card : '#f1e7e7',
-        background:'#fcf8f7'
+        primary: '#f1e7e7',
+        card: '#f1e7e7',
+        border: '#f1e7e7',
+        background: '#fcf8f7',
     }
 
 }
@@ -97,9 +100,19 @@ export default function App() {
         <PaperProvider theme={theme}>
             <Provider store={store}>
                 <PersistGate loading={null} persistor={persistor}>
-                    <NavigationContainer theme={navTheme}>
-                        <Stack.Navigator initialRouteName="Home">
-                            <Stack.Screen name="Watch list" component={HomeScreen}/>
+                    <NavigationContainer>
+                        <Stack.Navigator initialRouteName="Home"
+                                         screenOptions={{
+                                             headerStyle: {
+                                                 backgroundColor: '#f1e7e7',
+                                             }
+                                         }}>
+                            <Stack.Screen name="Watch list" component={HomeScreen}
+                                          options={{
+                                              headerRight: () => (
+                                                  <CountryFlag isoCode={"FR"} size={20}></CountryFlag>
+                                              ),
+                                          }}/>
                             <Stack.Screen name="Select a movie" component={MovieSelectorScreen}/>
                             <Stack.Screen name="Details" component={MovieDetailsPage}/>
                         </Stack.Navigator>

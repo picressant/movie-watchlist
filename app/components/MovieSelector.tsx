@@ -30,6 +30,7 @@ const styles = StyleSheet.create({
             flexDirection: "column",
             width: '100%',
             marginVertical: 5,
+            marginTop: 10
         },
         searchBar: {},
         movieContainer: {

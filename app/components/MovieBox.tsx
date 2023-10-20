@@ -1,15 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, Image, Platform, StyleSheet, Text, TouchableNativeFeedback, View} from 'react-native';
-// @ts-ignore
-import {API_KEY} from '@env'
 import {List} from 'react-native-paper';
 import {fetchMovie, Movie} from "../domain/Movie";
-
-type MovieProps = {
-    id: string;
-    watchLang: string;
-    navigation: { navigate: Function }
-};
 
 const styles = StyleSheet.create({
         container: {
@@ -70,6 +62,21 @@ const styles = StyleSheet.create({
                 fontSize: 10,
                 marginRight: 2
             }
+        },
+        loader: {
+            height: 145,
+            shadowColor: "#000",
+            shadowOffset: {
+                width: 0,
+                height: 4,
+            },
+            shadowOpacity: 0.32,
+            shadowRadius: 5.46,
+
+            elevation: 5,
+            backgroundColor: 'lightgrey',
+            borderRadius: 8,
+            width: '100%',
         }
     }
 );
@@ -90,7 +97,7 @@ const MovieBox = ({navigation, props}) => {
 
     return (
         <View>
-            {loading && <ActivityIndicator/>}
+            {loading && <ActivityIndicator style={styles.loader}/>}
             {data && (
                 <TouchableNativeFeedback
                     onPress={() => navigation.navigate("Details", {id: data.id, watchLang: props.watchLang})}

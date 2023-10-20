@@ -10,7 +10,6 @@ const movieSlice = createSlice({
             state.movieIds = [...state.movieIds, action.payload]
         },
         movieRemoved(state: MovieState, action: PayloadAction<number>) {
-            console.log(action.payload, state.movieIds);
             state.movieIds = [...state.movieIds.filter(id => id !== action.payload)]
         }
     }
