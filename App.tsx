@@ -1,31 +1,11 @@
-import {Animated, StyleSheet, View} from 'react-native';
 import React from "react";
-import MovieSelector from "./app/components/MovieSelector";
-import {DefaultTheme, NavigationContainer} from "@react-navigation/native";
-import {createNativeStackNavigator} from "@react-navigation/native-stack";
-import MovieBox from './app/components/MovieBox';
-import {FAB, MD3LightTheme, PaperProvider} from "react-native-paper";
-import {Provider, useSelector} from "react-redux";
-import MoviePage from "./app/components/MoviePage";
+import {MD3LightTheme, PaperProvider} from "react-native-paper";
+import {Provider} from "react-redux";
 import {persistor, store} from "./app/redux/store/storage";
 import {PersistGate} from 'redux-persist/integration/react';
-import CountryFlag from "react-native-country-flag";
-import ScrollView = Animated.ScrollView;
+import Main from './app/components/Main';
+import {StatusBar} from "expo-status-bar";
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    containerMarged: {
-        flex: 1,
-        marginHorizontal: 10
-    },
-    fab: {
-        position: "absolute",
-        bottom: 10,
-        right: 10
-    }
-});
 
 const theme = {
     ...MD3LightTheme, // or MD3DarkTheme
@@ -42,81 +22,12 @@ const theme = {
     },
 };
 
-const navTheme = {
-    ...DefaultTheme,
-    colors: {
-        primary: '#f1e7e7',
-        card: '#f1e7e7',
-        border: '#f1e7e7',
-        background: '#fcf8f7',
-    }
-
-}
-
-
-// @ts-ignore
-const HomeScreen = ({navigation}) => {
-    const movieIds: number[] = useSelector((state) => state.movies.movieIds)
-
-    return (
-        <View style={styles.containerMarged}>
-            <ScrollView>
-                {movieIds.map(id => <MovieBox navigation={navigation}
-                                              key={id}
-                                              props={{id: id.toString(), watchLang: "FR"}}></MovieBox>)}
-            </ScrollView>
-            <FAB
-                icon="plus"
-                style={styles.fab}
-                variant={"primary"}
-                onPress={() => navigation.navigate("Select a movie")}
-            />
-        </View>
-    );
-};
-
-// @ts-ignore
-function MovieSelectorScreen({navigation}) {
-    return (
-        <View style={styles.containerMarged}>
-            <MovieSelector navigation={navigation}></MovieSelector>
-        </View>
-    );
-}
-
-function MovieDetailsPage({route, navigation}) {
-    return (
-        <View style={styles.container}>
-            <MoviePage route={route} navigation={navigation}></MoviePage>
-        </View>
-    );
-}
-
-const Stack = createNativeStackNavigator();
-
-
 export default function App() {
     return (
         <PaperProvider theme={theme}>
             <Provider store={store}>
                 <PersistGate loading={null} persistor={persistor}>
-                    <NavigationContainer>
-                        <Stack.Navigator initialRouteName="Home"
-                                         screenOptions={{
-                                             headerStyle: {
-                                                 backgroundColor: '#f1e7e7',
-                                             }
-                                         }}>
-                            <Stack.Screen name="Watch list" component={HomeScreen}
-                                          options={{
-                                              headerRight: () => (
-                                                  <CountryFlag isoCode={"FR"} size={20}></CountryFlag>
-                                              ),
-                                          }}/>
-                            <Stack.Screen name="Select a movie" component={MovieSelectorScreen}/>
-                            <Stack.Screen name="Details" component={MovieDetailsPage}/>
-                        </Stack.Navigator>
-                    </NavigationContainer>
+                    <Main></Main>
                 </PersistGate>
             </Provider>
         </PaperProvider>

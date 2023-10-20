@@ -1,4 +1,4 @@
-const countries: { country: string, code: string }[] = [
+export const countries: { country: string, code: string }[] = [
     {"country": "Afghanistan", "code": "AF"},
     {"country": "Îles Åland", "code": "AX"},
     {"country": "Albanie", "code": "AL"},

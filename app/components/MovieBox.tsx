@@ -81,6 +81,7 @@ const styles = StyleSheet.create({
     }
 );
 
+// @ts-ignore
 const MovieBox = ({navigation, props}) => {
     const [data, setData] = useState<Movie>();
     const [loading, setLoading] = useState(true);

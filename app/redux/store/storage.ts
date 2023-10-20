@@ -3,12 +3,14 @@ import {combineReducers} from "redux";
 import {FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE} from "redux-persist";
 
 import moviesReducer from "../slices/MovieSlice";
+import countryReducer from "../slices/CountrySlice";
 import {configureStore} from "@reduxjs/toolkit";
 
 
 // @ts-ignore
 const rootReducer = combineReducers({
     movies: moviesReducer,
+    country: countryReducer
 });
 
 const persistConfig = {

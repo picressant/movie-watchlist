@@ -96,6 +96,7 @@ const styles = StyleSheet.create({
     }
 });
 
+// @ts-ignore
 const MoviePage = ({route, navigation}) => {
     const [data, setData] = useState<Movie>();
     const [loading, setLoading] = useState(true);
