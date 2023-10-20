@@ -136,6 +136,7 @@ const MoviePage = ({route, navigation}) => {
                 <View style={styles.services}>
                     {provider.flatrate?.map(p => <Image
                         style={styles.smallPoster}
+                        key={p.logo_path}
                         source={{
                             uri: 'https://image.tmdb.org/t/p/w500/' + p.logo_path
                         }}

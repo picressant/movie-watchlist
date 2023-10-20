@@ -118,6 +118,7 @@ const MovieBox = ({navigation, props}) => {
                             <View style={styles.movieProviders}>
                                 {data.favoriteCountryProviders?.flatrate?.map(p => <Image
                                     style={styles.smallPoster}
+                                    key={p.logo_path}
                                     source={{
                                         uri: 'https://image.tmdb.org/t/p/w500/' + p.logo_path
                                     }}

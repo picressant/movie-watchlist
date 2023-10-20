@@ -1,28 +1,38 @@
 import AsyncStorage from "@react-native-community/async-storage";
-import { createStore, combineReducers } from "redux";
-import { persistStore, persistReducer } from "redux-persist";
+import {combineReducers} from "redux";
+import {FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE} from "redux-persist";
 
-import movieReducer from "../slices/MovieSlice";
-import {configureStore} from "@reduxjs/toolkit";
 import moviesReducer from "../slices/MovieSlice";
+import {configureStore} from "@reduxjs/toolkit";
 
+
+// @ts-ignore
 const rootReducer = combineReducers({
-    movies: movieReducer,
+    movies: moviesReducer,
 });
 
 const persistConfig = {
     key: "root",
-    storage: AsyncStorage,
-    whitelist: ["example"],
+    storage: AsyncStorage
 };
 
 
 // Middleware: Redux Persist Persisted Reducer
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-const store = createStore(persistedReducer);
+
+const store = configureStore({
+    reducer: persistedReducer,
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({
+            serializableCheck: {
+                ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+            },
+        }),
+})
+// const store = createStore(persistedReducer);
 
 // Middleware: Redux Persist Persister
-let persistor = persistStore(store);
+const persistor = persistStore(store);
 
-export { store, persistor };
+export {store, persistor};

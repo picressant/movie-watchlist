@@ -35,6 +35,7 @@ const HomeScreen = ({navigation}) => {
         <View style={styles.containerMarged}>
             <ScrollView>
                 {movieIds.map(id => <MovieBox navigation={navigation}
+                                              key={id}
                                               props={{id: id.toString(), watchLang: "FR"}}></MovieBox>)}
             </ScrollView>
             <FAB
