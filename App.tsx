@@ -1,7 +1,7 @@
 import {Animated, StyleSheet, View} from 'react-native';
 import React from "react";
 import MovieSelector from "./app/components/MovieSelector";
-import {NavigationContainer} from "@react-navigation/native";
+import {DefaultTheme, NavigationContainer} from "@react-navigation/native";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import MovieBox from './app/components/MovieBox';
 import {FAB, MD3LightTheme, PaperProvider} from "react-native-paper";
@@ -40,6 +40,16 @@ const theme = {
         }
     },
 };
+
+const navTheme = {
+    ...DefaultTheme,
+    colors: {
+        card : '#f1e7e7',
+        background:'#fcf8f7'
+    }
+
+}
+
 
 // @ts-ignore
 const HomeScreen = ({navigation}) => {
@@ -87,7 +97,7 @@ export default function App() {
         <PaperProvider theme={theme}>
             <Provider store={store}>
                 <PersistGate loading={null} persistor={persistor}>
-                    <NavigationContainer>
+                    <NavigationContainer theme={navTheme}>
                         <Stack.Navigator initialRouteName="Home">
                             <Stack.Screen name="Watch list" component={HomeScreen}/>
                             <Stack.Screen name="Select a movie" component={MovieSelectorScreen}/>

@@ -4,7 +4,7 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start --tunnel",
-    "build:prod": "rm *.lock && eas build -p android --profile production"
+    "build:prod": "rm -f *.lock && eas build -p android --profile production"
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.12.1",
