@@ -147,7 +147,6 @@ const MoviePage = ({route, navigation}) => {
     }
 
     return (
-        <PaperProvider>
             <View style={styles.container}>
                 {loading && <ActivityIndicator/>}
                 {data && (
@@ -206,7 +205,6 @@ const MoviePage = ({route, navigation}) => {
                     </Dialog>
                 </Portal>
             </View>
-        </PaperProvider>
     )
 };
 

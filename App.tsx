@@ -1,16 +1,15 @@
-import {Animated, Button, StyleSheet, View} from 'react-native';
+import {Animated, StyleSheet, View} from 'react-native';
 import React from "react";
 import MovieSelector from "./app/components/MovieSelector";
 import {NavigationContainer} from "@react-navigation/native";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import MovieBox from './app/components/MovieBox';
-import {FAB, IconButton} from "react-native-paper";
-import {Provider, useDispatch, useSelector} from "react-redux";
+import {FAB, MD3LightTheme, PaperProvider} from "react-native-paper";
+import {Provider, useSelector} from "react-redux";
 import MoviePage from "./app/components/MoviePage";
 import {persistor, store} from "./app/redux/store/storage";
 import {PersistGate} from 'redux-persist/integration/react';
 import ScrollView = Animated.ScrollView;
-import {movieRemoved} from "./app/redux/slices/MovieSlice";
 
 const styles = StyleSheet.create({
     container: {
@@ -27,6 +26,21 @@ const styles = StyleSheet.create({
     }
 });
 
+const theme = {
+    ...MD3LightTheme, // or MD3DarkTheme
+    roundness: 2,
+    colors: {
+        ...MD3LightTheme.colors,
+        primary: '#b99369',
+        secondary: '#f1e3d4',
+        background: '#FFFFFF',
+        primaryContainer: '#f3e7db',
+        elevation: {
+            level3: '#f1e7e7'
+        }
+    },
+};
+
 // @ts-ignore
 const HomeScreen = ({navigation}) => {
     const movieIds: number[] = useSelector((state) => state.movies.movieIds)
@@ -41,6 +55,7 @@ const HomeScreen = ({navigation}) => {
             <FAB
                 icon="plus"
                 style={styles.fab}
+                variant={"primary"}
                 onPress={() => navigation.navigate("Select a movie")}
             />
         </View>
@@ -69,17 +84,18 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
     return (
-        <Provider store={store}>
-            <PersistGate loading={null} persistor={persistor}>
-                <NavigationContainer>
-                    <Stack.Navigator initialRouteName="Home">
-                        <Stack.Screen name="Watch list" component={HomeScreen}/>
-                        <Stack.Screen name="Select a movie" component={MovieSelectorScreen}/>
-                        <Stack.Screen name="Details" component={MovieDetailsPage}/>
-                    </Stack.Navigator>
-                </NavigationContainer>
-            </PersistGate>
-        </Provider>
-
+        <PaperProvider theme={theme}>
+            <Provider store={store}>
+                <PersistGate loading={null} persistor={persistor}>
+                    <NavigationContainer>
+                        <Stack.Navigator initialRouteName="Home">
+                            <Stack.Screen name="Watch list" component={HomeScreen}/>
+                            <Stack.Screen name="Select a movie" component={MovieSelectorScreen}/>
+                            <Stack.Screen name="Details" component={MovieDetailsPage}/>
+                        </Stack.Navigator>
+                    </NavigationContainer>
+                </PersistGate>
+            </Provider>
+        </PaperProvider>
     );
 }
