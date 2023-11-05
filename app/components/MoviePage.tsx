@@ -106,18 +106,16 @@ const MoviePage = ({route, navigation}) => {
 
     const hideDialog = () => setVisible(false);
 
-    const {id, watchLang} = route.params;
-    // const regionNamesInFrench = new Intl.DisplayNames(['fr'], { type: 'region' });
+    const {id} = route.params;
 
     const dispatch = useDispatch();
     const dispatchDelete = () => {
-        console.log("deleting", id);
         dispatch(movieRemoved(id));
         navigation.goBack();
     }
 
     const fetchData = async () => {
-        const movie = await fetchMovie(id, watchLang);
+        const movie = await fetchMovie(id);
         setData(movie);
         setLoading(false);
     };

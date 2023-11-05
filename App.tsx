@@ -4,7 +4,6 @@ import {Provider} from "react-redux";
 import {persistor, store} from "./app/redux/store/storage";
 import {PersistGate} from 'redux-persist/integration/react';
 import Main from './app/components/Main';
-import {StatusBar} from "expo-status-bar";
 
 
 const theme = {

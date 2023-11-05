@@ -4,13 +4,13 @@ import MovieSelector from "./MovieSelector";
 import {NavigationContainer} from "@react-navigation/native";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import MovieBox from './MovieBox';
-import {FAB, Modal, PaperProvider, Portal} from "react-native-paper";
+import {Button, FAB, Modal, PaperProvider, Portal} from "react-native-paper";
 import {useSelector} from "react-redux";
 import MoviePage from "./MoviePage";
 import CountryFlag from "react-native-country-flag";
 import CountrySelector from "./CountrySelector";
-import ScrollView = Animated.ScrollView;
 import {StatusBar} from "expo-status-bar";
+import ScrollView = Animated.ScrollView;
 
 const styles = StyleSheet.create({
     container: {
@@ -24,19 +24,29 @@ const styles = StyleSheet.create({
         position: "absolute",
         bottom: 10,
         right: 10
+    },
+    countryButton: {
+        // height:40,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "red"
     }
 });
 
 // @ts-ignore
 const HomeScreen = ({navigation}) => {
     const movieIds: number[] = useSelector((state) => state.movies.movieIds)
+    const countryCode: string = useSelector((state) => {
+        return state.country.countryCode;
+    });
 
     return (
         <View style={styles.containerMarged}>
             <ScrollView>
                 {movieIds.map(id => <MovieBox navigation={navigation}
                                               key={id}
-                                              props={{id: id.toString(), watchLang: "FR"}}></MovieBox>)}
+                                              props={{id: id.toString(), watchLang: countryCode}}></MovieBox>)}
             </ScrollView>
             <FAB
                 icon="plus"
@@ -72,15 +82,15 @@ const Main = () => {
     const [visible, setVisible] = React.useState(false);
 
     const showModal = () => {
-        console.log("showing")
         setVisible(true);
     }
     const hideModal = () => setVisible(false);
 
     const countryCode: string = useSelector((state) => {
-        // setVisible(false);
         return state.country.countryCode;
     });
+
+    const containerStyle = {backgroundColor: 'white', padding: 20, height: 500, margin: 20};
 
 
     return (
@@ -102,7 +112,9 @@ const Main = () => {
                                                       ? TouchableNativeFeedback.SelectableBackground()
                                                       : undefined
                                               }>
-                                              <CountryFlag isoCode={countryCode} size={20}></CountryFlag>
+                                              <View style={styles.countryButton}>
+                                                  <CountryFlag isoCode={countryCode} size={20}></CountryFlag>
+                                              </View>
                                           </TouchableNativeFeedback>
                                       ),
                                   }}/>
@@ -111,8 +123,8 @@ const Main = () => {
                 </Stack.Navigator>
             </NavigationContainer>
             <Portal>
-                <Modal visible={visible} onDismiss={hideModal}>
-                    <CountrySelector></CountrySelector>
+                <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>
+                    <CountrySelector closeModal={() => hideModal()}></CountrySelector>
                 </Modal>
             </Portal>
             <StatusBar style="dark" backgroundColor={"#f1e7e7"}/>

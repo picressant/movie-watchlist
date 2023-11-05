@@ -87,7 +87,7 @@ const MovieBox = ({navigation, props}) => {
     const [loading, setLoading] = useState(true);
 
     const fetchData = async () => {
-        const movie = await fetchMovie(props.id, props.watchLang);
+        const movie = await fetchMovie(props.id);
         setData(movie);
         setLoading(false);
     };
@@ -101,7 +101,7 @@ const MovieBox = ({navigation, props}) => {
             {loading && <ActivityIndicator style={styles.loader}/>}
             {data && (
                 <TouchableNativeFeedback
-                    onPress={() => navigation.navigate("Details", {id: data.id, watchLang: props.watchLang})}
+                    onPress={() => navigation.navigate("Details", {id: data.id})}
                     background={
                         Platform.OS === 'android'
                             ? TouchableNativeFeedback.SelectableBackground()
@@ -124,7 +124,7 @@ const MovieBox = ({navigation, props}) => {
                                 <Text style={styles.time.font}>{data.runtime} min</Text>
                             </View>
                             <View style={styles.movieProviders}>
-                                {data.favoriteCountryProviders?.flatrate?.map(p => <Image
+                                {data.providers.find(p => p.lang === props.watchLang)?.flatrate?.map(p => <Image
                                     style={styles.smallPoster}
                                     key={p.logo_path}
                                     source={{
