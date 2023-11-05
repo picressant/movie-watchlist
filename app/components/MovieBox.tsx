@@ -7,7 +7,6 @@ const styles = StyleSheet.create({
         container: {
             display: "flex",
             marginVertical: 10,
-            // flex:1,
             flexDirection: "row",
 
             shadowColor: "#000",
@@ -77,6 +76,7 @@ const styles = StyleSheet.create({
             backgroundColor: 'lightgrey',
             borderRadius: 8,
             width: '100%',
+            marginVertical: 10,
         }
     }
 );
