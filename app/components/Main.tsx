@@ -1,15 +1,16 @@
-import {Animated, Platform, StyleSheet, TouchableNativeFeedback, View} from 'react-native';
+import { Animated, Platform, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 import React from "react";
 import MovieSelector from "./MovieSelector";
 import {NavigationContainer} from "@react-navigation/native";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import MovieBox from './MovieBox';
-import {Button, FAB, Modal, PaperProvider, Portal} from "react-native-paper";
+import { Button, FAB, Icon, Modal, PaperProvider, Portal } from 'react-native-paper';
 import {useSelector} from "react-redux";
 import MoviePage from "./MoviePage";
 import CountryFlag from "react-native-country-flag";
 import CountrySelector from "./CountrySelector";
 import {StatusBar} from "expo-status-bar";
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ScrollView = Animated.ScrollView;
 
 const styles = StyleSheet.create({
@@ -34,12 +35,9 @@ const styles = StyleSheet.create({
     }
 });
 
-// @ts-ignore
-const HomeScreen = ({navigation}) => {
-    const movieIds: number[] = useSelector((state) => state.movies.movieIds)
-    const countryCode: string = useSelector((state) => {
-        return state.country.countryCode;
-    });
+const MovieScreen = ({navigation}) => {
+    const movieIds: number[] = useSelector((state: any) => state.movies.movieIds)
+    const countryCode: string = useSelector((state: any) => state.country.countryCode);
 
     return (
         <View style={styles.containerMarged}>
@@ -55,6 +53,36 @@ const HomeScreen = ({navigation}) => {
                 onPress={() => navigation.navigate("Select a movie")}
             />
         </View>
+    );
+}
+
+const SeriesScreen = ({navigation}) => {
+
+    return (
+        <View style={styles.containerMarged}>
+            <Text>Series</Text>
+        </View>
+    );
+}
+
+// @ts-ignore
+const HomeScreen = ({navigation}) => {
+    const Tab = createBottomTabNavigator();
+
+    return (
+        <Tab.Navigator>
+            <Tab.Screen name="Movies" component={MovieScreen} options={{
+                headerShown: false,
+                tabBarIcon: ({color, size}) => (
+                    <Icon size={size} source="filmstrip" color={color}></Icon>
+             )}} />
+            <Tab.Screen name="Series" component={SeriesScreen} options={{
+                headerShown: false,
+                tabBarIcon: ({color, size}) => (
+                    <Icon size={size} source="television" color={color}></Icon>
+                )
+            }} />
+        </Tab.Navigator>
     );
 };
 
@@ -86,9 +114,7 @@ const Main = () => {
     }
     const hideModal = () => setVisible(false);
 
-    const countryCode: string = useSelector((state) => {
-        return state.country.countryCode;
-    });
+    const countryCode: string = useSelector((state: any) => state.country.countryCode);
 
     const containerStyle = {backgroundColor: 'white', padding: 20, height: 500, margin: 20};
 
