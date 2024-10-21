@@ -4,12 +4,14 @@ import {FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, RE
 
 import moviesReducer from "../slices/MovieSlice";
 import countryReducer from "../slices/CountrySlice";
+import seriesReducer from "../slices/SeriesSlice";
 import {configureStore} from "@reduxjs/toolkit";
 
 
 // @ts-ignore
 const rootReducer = combineReducers({
     movies: moviesReducer,
+    series: seriesReducer,
     country: countryReducer
 });
 

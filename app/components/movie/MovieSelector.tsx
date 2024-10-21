@@ -15,7 +15,7 @@ import {debounce} from 'lodash';
 import {API_KEY} from '@env'
 import {Searchbar} from "react-native-paper";
 import {useDispatch} from "react-redux";
-import {movieAdded} from "../redux/slices/MovieSlice";
+import {movieAdded} from "../../redux/slices/MovieSlice";
 
 type Movie = {
     id: number;

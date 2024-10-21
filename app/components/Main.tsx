@@ -1,16 +1,19 @@
 import { Animated, Platform, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 import React from "react";
-import MovieSelector from "./MovieSelector";
+import MovieSelector from "./movie/MovieSelector";
 import {NavigationContainer} from "@react-navigation/native";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
-import MovieBox from './MovieBox';
+import MovieBox from './movie/MovieBox';
 import { Button, FAB, Icon, Modal, PaperProvider, Portal } from 'react-native-paper';
 import {useSelector} from "react-redux";
-import MoviePage from "./MoviePage";
+import MoviePage from "./movie/MoviePage";
 import CountryFlag from "react-native-country-flag";
 import CountrySelector from "./CountrySelector";
 import {StatusBar} from "expo-status-bar";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import SeriesBox from './series/SeriesBox';
+import SeriesPage from './series/SeriesPage';
+import SeriesSelector from './series/SeriesSelector';
 import ScrollView = Animated.ScrollView;
 
 const styles = StyleSheet.create({
@@ -36,7 +39,7 @@ const styles = StyleSheet.create({
 });
 
 const MovieScreen = ({navigation}) => {
-    const movieIds: number[] = useSelector((state: any) => state.movies.movieIds)
+    const movieIds: number[] = useSelector((state: any) => state.movies.movieIds);
     const countryCode: string = useSelector((state: any) => state.country.countryCode);
 
     return (
@@ -57,10 +60,22 @@ const MovieScreen = ({navigation}) => {
 }
 
 const SeriesScreen = ({navigation}) => {
+    const seriesId: number[] = useSelector((state: any) => state.series.seriesIds);
+    const countryCode: string = useSelector((state: any) => state.country.countryCode);
 
     return (
         <View style={styles.containerMarged}>
-            <Text>Series</Text>
+            <ScrollView>
+                {seriesId.map(id => <SeriesBox navigation={navigation}
+                                              key={id}
+                                              props={{id: id.toString(), watchLang: countryCode}}></SeriesBox>)}
+            </ScrollView>
+            <FAB
+                icon="plus"
+                style={styles.fab}
+                variant={"primary"}
+                onPress={() => navigation.navigate("Select a serie")}
+            />
         </View>
     );
 }
@@ -95,10 +110,26 @@ function MovieSelectorScreen({navigation}) {
     );
 }
 
+function SeriesSelectorScreen({navigation}) {
+    return (
+        <View style={styles.containerMarged}>
+            <SeriesSelector navigation={navigation}></SeriesSelector>
+        </View>
+    );
+}
+
 function MovieDetailsPage({route, navigation}) {
     return (
         <View style={styles.container}>
             <MoviePage route={route} navigation={navigation}></MoviePage>
+        </View>
+    );
+}
+
+function SeriesDetailsPage({route, navigation}) {
+    return (
+        <View style={styles.container}>
+            <SeriesPage route={route} navigation={navigation}></SeriesPage>
         </View>
     );
 }
@@ -145,7 +176,9 @@ const Main = () => {
                                       ),
                                   }}/>
                     <Stack.Screen name="Select a movie" component={MovieSelectorScreen}/>
-                    <Stack.Screen name="Details" component={MovieDetailsPage}/>
+                    <Stack.Screen name="Select a serie" component={SeriesSelectorScreen}/>
+                    <Stack.Screen name="Movie details" component={MovieDetailsPage}/>
+                    <Stack.Screen name="Series details" component={SeriesDetailsPage}/>
                 </Stack.Navigator>
             </NavigationContainer>
             <Portal>

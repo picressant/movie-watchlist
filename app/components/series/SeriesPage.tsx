@@ -2,18 +2,18 @@ import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, FlatList, FlatListProps, Image, StyleSheet, Text, View} from 'react-native';
 // @ts-ignore
 import {API_KEY} from '@env'
-import {fetchMovie, Movie, WatchProvider} from "../domain/Movie";
+import {fetchSeries, Series, WatchProvider} from "../../domain/Series";
 import {useDispatch} from "react-redux";
-import {movieRemoved} from "../redux/slices/MovieSlice";
+import {seriesRemoved} from "../../redux/slices/SeriesSlice";
 import {Button, Dialog, FAB, List, PaperProvider, Portal} from "react-native-paper";
 import CountryFlag from "react-native-country-flag";
-import {getCountry} from "../domain/Countries";
+import {getCountry} from "../../domain/Countries";
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    movieContainer: {
+    seriesContainer: {
         flex: 1,
         flexDirection: "row",
         width: '100%',
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
         height: 150,
         opacity: 0.75
     },
-    movieInfo: {
+    seriesInfo: {
         paddingLeft: 130,
         minHeight: 75,
         justifyContent: "center"
@@ -97,8 +97,8 @@ const styles = StyleSheet.create({
 });
 
 // @ts-ignore
-const MoviePage = ({route, navigation}) => {
-    const [data, setData] = useState<Movie>();
+const SeriesPage = ({route, navigation}) => {
+    const [data, setData] = useState<Series>();
     const [loading, setLoading] = useState(true);
     const [visible, setVisible] = React.useState(false);
 
@@ -110,13 +110,13 @@ const MoviePage = ({route, navigation}) => {
 
     const dispatch = useDispatch();
     const dispatchDelete = () => {
-        dispatch(movieRemoved(id));
+        dispatch(seriesRemoved(id));
         navigation.goBack();
     }
 
     const fetchData = async () => {
-        const movie = await fetchMovie(id);
-        setData(movie);
+        const series = await fetchSeries(id);
+        setData(series);
         setLoading(false);
     };
 
@@ -159,16 +159,16 @@ const MoviePage = ({route, navigation}) => {
                                 uri: 'https://image.tmdb.org/t/p/w500/' + data.poster_path
                             }}
                         ></Image>
-                        <View style={styles.movieInfo}>
-                            <Text style={styles.title}>{data.title}</Text>
-                            {data.title !== data.original_title && (
-                                <Text style={styles.originalTitle}>{data.original_title}</Text>)}
+                        <View style={styles.seriesInfo}>
+                            <Text style={styles.title}>{data.name}</Text>
+                            {data.name !== data.original_name && (
+                                <Text style={styles.originalTitle}>{data.original_name}</Text>)}
                         </View>
                         <View style={styles.otherInfo}>
                             <View style={styles.otherData}>
-                                <List.Icon icon={"clock-time-eight-outline"} color={"grey"}
+                                <List.Icon icon={"counter"} color={"grey"}
                                            style={styles.otherData.font}></List.Icon>
-                                <Text style={styles.otherData.font}>{data.runtime} min</Text>
+                                <Text style={styles.otherData.font}>{data.number_of_seasons} seasons</Text>
                             </View>
                             <View style={styles.otherData}>
                                 <List.Icon icon={"account"} color={"grey"}
@@ -207,4 +207,4 @@ const MoviePage = ({route, navigation}) => {
     )
 };
 
-export default MoviePage;
+export default SeriesPage;

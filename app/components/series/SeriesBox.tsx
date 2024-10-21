@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, Image, Platform, StyleSheet, Text, TouchableNativeFeedback, View} from 'react-native';
 import {List} from 'react-native-paper';
-import {fetchMovie, Movie} from "../domain/Movie";
+import {fetchSeries, Series} from "../../domain/Series";
 
 const styles = StyleSheet.create({
         container: {
@@ -24,12 +24,12 @@ const styles = StyleSheet.create({
             padding: 10,
             width: '100%',
         },
-        movieInfo: {
+        seriesInfo: {
             flexDirection: "column",
             flex: 1,
             padding: 5
         },
-        movieProviders: {
+        seriesProviders: {
             marginTop: "auto",
             flexDirection: "row"
         },
@@ -82,13 +82,13 @@ const styles = StyleSheet.create({
 );
 
 // @ts-ignore
-const MovieBox = ({navigation, props}) => {
-    const [data, setData] = useState<Movie>();
+const SeriesBox = ({navigation, props}) => {
+    const [data, setData] = useState<Series>();
     const [loading, setLoading] = useState(true);
 
     const fetchData = async () => {
-        const movie = await fetchMovie(props.id);
-        setData(movie);
+        const series = await fetchSeries(props.id);
+        setData(series);
         setLoading(false);
     };
 
@@ -101,7 +101,7 @@ const MovieBox = ({navigation, props}) => {
             {loading && <ActivityIndicator style={styles.loader}/>}
             {data && (
                 <TouchableNativeFeedback
-                    onPress={() => navigation.navigate("Details", {id: data.id})}
+                    onPress={() => navigation.navigate("Series details", {id: data.id})}
                     background={
                         Platform.OS === 'android'
                             ? TouchableNativeFeedback.SelectableBackground()
@@ -114,16 +114,16 @@ const MovieBox = ({navigation, props}) => {
                                 uri: 'https://image.tmdb.org/t/p/w500/' + data.poster_path
                             }}
                         ></Image>
-                        <View style={styles.movieInfo}>
-                            <Text style={styles.title}>{data.title}</Text>
-                            {data.title !== data.original_title && (
-                                <Text style={styles.originalTitle}>{data.original_title}</Text>)}
+                        <View style={styles.seriesInfo}>
+                            <Text style={styles.title}>{data.name}</Text>
+                            {data.name !== data.original_name && (
+                                <Text style={styles.originalTitle}>{data.original_name}</Text>)}
                             <View style={styles.time}>
-                                <List.Icon icon={"clock-time-eight-outline"} color={"grey"}
+                                <List.Icon icon={"counter"} color={"grey"}
                                            style={styles.time.font}></List.Icon>
-                                <Text style={styles.time.font}>{data.runtime} min</Text>
+                                <Text style={styles.time.font}>{data.number_of_seasons} seasons</Text>
                             </View>
-                            <View style={styles.movieProviders}>
+                            <View style={styles.seriesProviders}>
                                 {data.providers.find(p => p.lang === props.watchLang)?.flatrate?.map(p => <Image
                                     style={styles.smallPoster}
                                     key={p.logo_path}
@@ -140,4 +140,4 @@ const MovieBox = ({navigation, props}) => {
     )
 };
 
-export default MovieBox;
+export default SeriesBox;
