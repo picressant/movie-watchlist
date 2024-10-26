@@ -1,5 +1,5 @@
 // @ts-ignore
-import {API_KEY} from '@env'
+import { API_KEY } from '@env';
 
 export type WatchProvider = {
     lang: string;
@@ -15,6 +15,11 @@ export type Seasons = {
     name: string;
     poster_path: string;
     season_number: number;
+    overview: string;
+    providers: WatchProvider[];
+    actors: string[];
+    directors: string[];
+    episodes: any[]
 }
 
 export type Series = {
@@ -30,7 +35,7 @@ export type Series = {
     directors: string[];
 }
 
-export async function fetchSeries(id: string): Promise<Series> {
+export async function fetchSeries(id: string, withSeasons: boolean = false): Promise<Series> {
     const resp = await fetch("https://api.themoviedb.org/3/tv/" + id + "?api_key=" + API_KEY + "&language=fr-FR");
     const data: Series = await resp.json();
 
@@ -50,6 +55,34 @@ export async function fetchSeries(id: string): Promise<Series> {
     data.actors = credits.cast.slice(0, 3).map(cast => cast.name);
     data.directors = credits.crew.filter(crew => crew.job === "Director").map(crew => crew.name);
 
+    if (withSeasons && data.number_of_seasons && data.number_of_seasons > 0) {
+        data.seasons = await Promise.all(Array.from({length: data.number_of_seasons}, (_, i) => fetchSeason((i + 1).toString(), id)));
+    }
+
+    // console.log(data);
+
+    return data;
+}
+
+async function fetchSeason(number: string, seriesId: string): Promise<Seasons> {
+    const resp = await fetch("https://api.themoviedb.org/3/tv/" + seriesId + "/season/" + number + "?api_key=" + API_KEY + "&language=fr-FR");
+    const data: Seasons = await resp.json();
+
+    const providersResp = await fetch("https://api.themoviedb.org/3/tv/" + seriesId + "/season/" + number + "/watch/providers?api_key=" + API_KEY);
+    const providers = await providersResp.json();
+    data.providers = [];
+
+    Object.keys(providers.results).forEach(key => {
+        const watch: WatchProvider = providers.results[key];
+        watch.lang = key;
+        data.providers.push(watch);
+    });
+
+    const creditsResponse = await fetch("https://api.themoviedb.org/3/tv/" + seriesId + "/season/" + number + "/credits?api_key=" + API_KEY);
+    const credits = await creditsResponse.json();
+
+    data.actors = credits.cast.slice(0, 3).map(cast => cast.name);
+    data.directors = credits.crew.filter(crew => crew.job === "Director").map(crew => crew.name);
 
     return data;
 }
