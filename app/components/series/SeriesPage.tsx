@@ -2,20 +2,18 @@
 import { API_KEY } from '@env';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, FlatListProps, Image, Platform, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
-import CountryFlag from 'react-native-country-flag';
 import { Button, Dialog, FAB, List, Portal } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCountry } from '../../domain/Countries';
-import { fetchSeries, Seasons, Series, WatchProvider } from '../../domain/Series';
+import { fetchSeries, Seasons, Series } from '../../domain/Series';
 import { seriesRemoved } from '../../redux/slices/SeriesSlice';
 
 const stylesBox = StyleSheet.create({
         container: {
-            display: "flex",
+            display: 'flex',
             marginVertical: 10,
-            flexDirection: "row",
+            flexDirection: 'row',
 
-            shadowColor: "#000",
+            shadowColor: '#000',
             shadowOffset: {
                 width: 0,
                 height: 4,
@@ -31,18 +29,18 @@ const stylesBox = StyleSheet.create({
             width: '100%',
         },
         seriesInfo: {
-            flexDirection: "column",
+            flexDirection: 'column',
             flex: 1,
-            padding: 5
+            padding: 5,
         },
         seriesProviders: {
-            marginTop: "auto",
-            flexDirection: "row"
+            marginTop: 'auto',
+            flexDirection: 'row',
         },
         poster: {
             width: 80,
             height: 125,
-            borderRadius: 10
+            borderRadius: 10,
         },
         smallPoster: {
             height: 32,
@@ -51,26 +49,26 @@ const stylesBox = StyleSheet.create({
             borderRadius: 2,
         },
         title: {
-            fontWeight: "bold",
-            fontSize: 17
+            fontWeight: 'bold',
+            fontSize: 17,
         },
         originalTitle: {
-            fontStyle: "italic",
-            fontSize: 10
+            fontStyle: 'italic',
+            fontSize: 10,
         },
         time: {
             marginTop: 5,
-            flexDirection: "row",
-            alignItems: "center",
-            color: "grey",
+            flexDirection: 'row',
+            alignItems: 'center',
+            color: 'grey',
             font: {
                 fontSize: 10,
-                marginRight: 2
-            }
+                marginRight: 2,
+            },
         },
         loader: {
             height: 145,
-            shadowColor: "#000",
+            shadowColor: '#000',
             shadowOffset: {
                 width: 0,
                 height: 4,
@@ -83,13 +81,18 @@ const stylesBox = StyleSheet.create({
             borderRadius: 8,
             width: '100%',
             marginVertical: 10,
-        }
-    }
+        },
+    },
 );
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    loader: {
+        justifyContent: 'center',
+        flex: 1,
+        alignItems: 'center',
     },
     seriesContainer: {
         flex: 1,
@@ -215,7 +218,7 @@ const SeriesPage = ({route, navigation}) => {
         return (
             <View>
                 <TouchableNativeFeedback
-                    onPress={() => navigation.navigate('Season details', {series: data.id})}
+                    onPress={() => navigation.navigate('Season details', {season: data})}
                     background={
                         Platform.OS === 'android'
                             ? TouchableNativeFeedback.SelectableBackground()
@@ -253,7 +256,11 @@ const SeriesPage = ({route, navigation}) => {
 
     return (
         <View style={styles.container}>
-            {loading && <ActivityIndicator/>}
+            {loading && (
+                <View style={styles.loader}>
+                    <ActivityIndicator size={"large"} color={"#b99369"}/>
+                </View>
+            )}
             {data && (
                 <View style={styles.container}>
                     <Image source={{

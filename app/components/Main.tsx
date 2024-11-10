@@ -1,18 +1,19 @@
-import { Animated, Platform, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
-import React from "react";
-import MovieSelector from "./movie/MovieSelector";
-import {NavigationContainer} from "@react-navigation/native";
-import {createNativeStackNavigator} from "@react-navigation/native-stack";
-import MovieBox from './movie/MovieBox';
-import { Button, FAB, Icon, Modal, PaperProvider, Portal } from 'react-native-paper';
-import {useSelector} from "react-redux";
-import MoviePage from "./movie/MoviePage";
-import CountryFlag from "react-native-country-flag";
-import CountrySelector from "./CountrySelector";
-import {StatusBar} from "expo-status-bar";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { StatusBar } from 'expo-status-bar';
+import React from 'react';
+import { Animated, Platform, StyleSheet, TouchableNativeFeedback, View } from 'react-native';
+import CountryFlag from 'react-native-country-flag';
+import { FAB, Icon, Modal, PaperProvider, Portal } from 'react-native-paper';
+import { useSelector } from 'react-redux';
+import CountrySelector from './CountrySelector';
+import MovieBox from './movie/MovieBox';
+import MoviePage from './movie/MoviePage';
+import MovieSelector from './movie/MovieSelector';
 import SeriesBox from './series/SeriesBox';
 import SeriesPage from './series/SeriesPage';
+import SeriesSeasonPage from './series/SeriesSeasonPage';
 import SeriesSelector from './series/SeriesSelector';
 import ScrollView = Animated.ScrollView;
 
@@ -179,6 +180,7 @@ const Main = () => {
                     <Stack.Screen name="Select a serie" component={SeriesSelectorScreen}/>
                     <Stack.Screen name="Movie details" component={MovieDetailsPage}/>
                     <Stack.Screen name="Series details" component={SeriesDetailsPage}/>
+                    <Stack.Screen name="Season details" component={SeriesSeasonPage}/>
                 </Stack.Navigator>
             </NavigationContainer>
             <Portal>

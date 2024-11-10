@@ -1,17 +1,21 @@
-import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, FlatList, FlatListProps, Image, StyleSheet, Text, View} from 'react-native';
 // @ts-ignore
-import {API_KEY} from '@env'
-import {fetchMovie, Movie, WatchProvider} from "../../domain/Movie";
-import {useDispatch} from "react-redux";
-import {movieRemoved} from "../../redux/slices/MovieSlice";
-import {Button, Dialog, FAB, List, PaperProvider, Portal} from "react-native-paper";
-import CountryFlag from "react-native-country-flag";
-import {getCountry} from "../../domain/Countries";
+import { API_KEY } from '@env';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, FlatList, FlatListProps, Image, StyleSheet, Text, View } from 'react-native';
+import CountryFlag from 'react-native-country-flag';
+import { Button, Dialog, FAB, List, Portal } from 'react-native-paper';
+import { useDispatch } from 'react-redux';
+import { getCountry } from '../../domain/Countries';
+import { fetchMovie, Movie, WatchProvider } from '../../domain/Movie';
+import { movieRemoved } from '../../redux/slices/MovieSlice';
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    loader: {
+        flex: 1,
+        justifyContent: "center"
     },
     movieContainer: {
         flex: 1,
@@ -147,7 +151,7 @@ const MoviePage = ({route, navigation}) => {
 
     return (
             <View style={styles.container}>
-                {loading && <ActivityIndicator/>}
+                {loading && <ActivityIndicator color={"#b99369"} style={styles.loader}/>}
                 {data && (
                     <View style={styles.container}>
                         <Image source={{

@@ -19,7 +19,8 @@ export type Seasons = {
     providers: WatchProvider[];
     actors: string[];
     directors: string[];
-    episodes: any[]
+    episodes: any[];
+    backdrop_path: string;
 }
 
 export type Series = {
@@ -56,7 +57,7 @@ export async function fetchSeries(id: string, withSeasons: boolean = false): Pro
     data.directors = credits.crew.filter(crew => crew.job === "Director").map(crew => crew.name);
 
     if (withSeasons && data.number_of_seasons && data.number_of_seasons > 0) {
-        data.seasons = await Promise.all(Array.from({length: data.number_of_seasons}, (_, i) => fetchSeason((i + 1).toString(), id)));
+        data.seasons = await Promise.all(Array.from({length: data.number_of_seasons}, (_, i) => fetchSeason((i + 1).toString(), id, data)));
     }
 
     // console.log(data);
@@ -64,7 +65,7 @@ export async function fetchSeries(id: string, withSeasons: boolean = false): Pro
     return data;
 }
 
-async function fetchSeason(number: string, seriesId: string): Promise<Seasons> {
+async function fetchSeason(number: string, seriesId: string, serie: Series): Promise<Seasons> {
     const resp = await fetch("https://api.themoviedb.org/3/tv/" + seriesId + "/season/" + number + "?api_key=" + API_KEY + "&language=fr-FR");
     const data: Seasons = await resp.json();
 
@@ -83,6 +84,8 @@ async function fetchSeason(number: string, seriesId: string): Promise<Seasons> {
 
     data.actors = credits.cast.slice(0, 3).map(cast => cast.name);
     data.directors = credits.crew.filter(crew => crew.job === "Director").map(crew => crew.name);
+
+    data.backdrop_path = serie.backdrop_path;
 
     return data;
 }

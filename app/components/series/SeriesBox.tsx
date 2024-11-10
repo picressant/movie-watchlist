@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Image, Platform, StyleSheet, Text, TouchableNativeFeedback, View} from 'react-native';
-import {List} from 'react-native-paper';
-import {fetchSeries, Series} from "../../domain/Series";
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Image, Platform, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
+import { List } from 'react-native-paper';
+import { fetchSeries, Series } from '../../domain/Series';
 
 const styles = StyleSheet.create({
         container: {
@@ -98,7 +98,7 @@ const SeriesBox = ({navigation, props}) => {
 
     return (
         <View>
-            {loading && <ActivityIndicator style={styles.loader}/>}
+            {loading && <ActivityIndicator style={styles.loader} color={"#b99369"}/>}
             {data && (
                 <TouchableNativeFeedback
                     onPress={() => navigation.navigate("Series details", {id: data.id})}
