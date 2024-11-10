@@ -14,8 +14,9 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     loader: {
+        justifyContent: 'center',
         flex: 1,
-        justifyContent: "center"
+        alignItems: 'center'
     },
     movieContainer: {
         flex: 1,

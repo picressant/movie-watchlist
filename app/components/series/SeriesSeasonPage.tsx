@@ -155,11 +155,6 @@ const SeriesSeason = ({route, navigation}) => {
                                        style={styles.otherData.font}></List.Icon>
                             <Text style={styles.otherData.font}>{data.actors.join(', ')}</Text>
                         </View>
-                        <View style={styles.otherData}>
-                            <List.Icon icon={'movie-open'} color={'grey'}
-                                       style={styles.otherData.font}></List.Icon>
-                            <Text style={styles.otherData.font}>{data.directors.join(', ')}</Text>
-                        </View>
                     </View>
                     <FlatList data={data.providers} extraData={countryCode} renderItem={renderProvider}></FlatList>
                 </View>

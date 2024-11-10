@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { Animated, Platform, StyleSheet, TouchableNativeFeedback, View } from 'react-native';
+import { Animated, Platform, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 import CountryFlag from 'react-native-country-flag';
 import { FAB, Icon, Modal, PaperProvider, Portal } from 'react-native-paper';
 import { useSelector } from 'react-redux';
@@ -23,20 +23,20 @@ const styles = StyleSheet.create({
     },
     containerMarged: {
         flex: 1,
-        marginHorizontal: 10
+        marginHorizontal: 10,
     },
     fab: {
-        position: "absolute",
+        position: 'absolute',
         bottom: 10,
-        right: 10
+        right: 10,
     },
     countryButton: {
         // height:40,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "red"
-    }
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'red',
+    },
 });
 
 const MovieScreen = ({navigation}) => {
@@ -45,41 +45,55 @@ const MovieScreen = ({navigation}) => {
 
     return (
         <View style={styles.containerMarged}>
-            <ScrollView>
-                {movieIds.map(id => <MovieBox navigation={navigation}
-                                              key={id}
-                                              props={{id: id.toString(), watchLang: countryCode}}></MovieBox>)}
-            </ScrollView>
+            {movieIds.length === 0 && (
+                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                    <Text style={{fontStyle: 'italic', color: 'lightgrey', fontSize: 18}}>No movie followed</Text>
+                </View>
+            )}
+            {movieIds.length > 0 && (
+                <ScrollView>
+                    {movieIds.map(id => <MovieBox navigation={navigation}
+                                                  key={id}
+                                                  props={{id: id.toString(), watchLang: countryCode}}></MovieBox>)}
+                </ScrollView>
+            )}
             <FAB
                 icon="plus"
                 style={styles.fab}
-                variant={"primary"}
-                onPress={() => navigation.navigate("Select a movie")}
+                variant={'primary'}
+                onPress={() => navigation.navigate('Select a movie')}
             />
         </View>
     );
-}
+};
 
 const SeriesScreen = ({navigation}) => {
-    const seriesId: number[] = useSelector((state: any) => state.series.seriesIds);
+    const seriesIds: number[] = useSelector((state: any) => state.series.seriesIds);
     const countryCode: string = useSelector((state: any) => state.country.countryCode);
 
     return (
         <View style={styles.containerMarged}>
-            <ScrollView>
-                {seriesId.map(id => <SeriesBox navigation={navigation}
-                                              key={id}
-                                              props={{id: id.toString(), watchLang: countryCode}}></SeriesBox>)}
-            </ScrollView>
+            {seriesIds.length === 0 && (
+                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                    <Text style={{fontStyle: 'italic', color: 'lightgrey', fontSize: 18}}>No series followed</Text>
+                </View>
+            )}
+            {seriesIds.length > 0 && (
+                <ScrollView>
+                    {seriesIds.map(id => <SeriesBox navigation={navigation}
+                                                    key={id}
+                                                    props={{id: id.toString(), watchLang: countryCode}}></SeriesBox>)}
+                </ScrollView>
+            )}
             <FAB
                 icon="plus"
                 style={styles.fab}
-                variant={"primary"}
-                onPress={() => navigation.navigate("Select a serie")}
+                variant={'primary'}
+                onPress={() => navigation.navigate('Select a serie')}
             />
         </View>
     );
-}
+};
 
 // @ts-ignore
 const HomeScreen = ({navigation}) => {
@@ -91,13 +105,14 @@ const HomeScreen = ({navigation}) => {
                 headerShown: false,
                 tabBarIcon: ({color, size}) => (
                     <Icon size={size} source="filmstrip" color={color}></Icon>
-             )}} />
+                ),
+            }}/>
             <Tab.Screen name="Series" component={SeriesScreen} options={{
                 headerShown: false,
                 tabBarIcon: ({color, size}) => (
                     <Icon size={size} source="television" color={color}></Icon>
-                )
-            }} />
+                ),
+            }}/>
         </Tab.Navigator>
     );
 };
@@ -143,7 +158,7 @@ const Main = () => {
 
     const showModal = () => {
         setVisible(true);
-    }
+    };
     const hideModal = () => setVisible(false);
 
     const countryCode: string = useSelector((state: any) => state.country.countryCode);
@@ -158,7 +173,7 @@ const Main = () => {
                                  screenOptions={{
                                      headerStyle: {
                                          backgroundColor: '#f1e7e7',
-                                     }
+                                     },
                                  }}>
                     <Stack.Screen name="Watch list" component={HomeScreen}
                                   options={{
@@ -188,9 +203,9 @@ const Main = () => {
                     <CountrySelector closeModal={() => hideModal()}></CountrySelector>
                 </Modal>
             </Portal>
-            <StatusBar style="dark" backgroundColor={"#f1e7e7"}/>
+            <StatusBar style="dark" backgroundColor={'#f1e7e7'}/>
         </PaperProvider>
-    )
-}
+    );
+};
 
 export default Main;
